@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 public class Todo {
@@ -11,35 +12,63 @@ public class Todo {
 	);
 
 	private static final List<String> statusNames = List.of(
-		"완료",
-		"미정"
+		"미정",
+		"완료"
 	);
+	private final String userName;
+	private final List<Integer> todo;
 
-	List<Integer> todo;
+	public Todo(String userName) {
+		this.userName = userName;
+		this.todo = new ArrayList<>();
+	}
 
-	public Todo(List<Integer> todo) {
-		this.todo = todo;
+	public String getUserName() {
+		return userName;
 	}
 
 	public void add(int todoNum) {
-		todo.add(todoNum);
+
+		if(todoNum < 1 || 5 < todoNum) {
+			throw new IllegalArgumentException("[ERROR] 1~5 사이의 숫자만 입력해주세요");
+		}
+
+		todo.add(todoNum - 1);
 	}
 
 	public String getTodoName(int todoNum) {
-		return todoNames.get(todoNum - 1);
+		return todoNames.get(todoNum);
 	}
 
-	public boolean isContinue(String command) {
+	public boolean isFinish(String command) {
 
 		return switch (command.toLowerCase()) {
-			case "c" -> true;
-			case "q" -> false;
-			default -> throw new IllegalArgumentException("Invalid command: " + command);
+			case "c" -> false;
+			case "q" -> true;
+			default -> throw new IllegalArgumentException("[ERROR] c 또는 q만 입력해주세요");
 		};
 	}
 
 	public String getStatusName(int statusOption) {
-		return statusNames.get(statusOption - 1);
+		return statusNames.get(statusOption);
 	}
 
+	@Override
+	public String toString() {
+
+		StringBuilder stringBuilder = new StringBuilder("- " + userName + "\n");
+
+		for (int i = 0; i < 5; i++) {
+			stringBuilder.append(i + 1).append(". ").append(todoNames.get(i));
+			if (todo.contains(i)) {
+				stringBuilder.append(" (").append(getStatusName(1)).append(")").append("\n");
+				continue;
+			}
+
+			stringBuilder.append(" (").append(getStatusName(0)).append(")").append("\n");
+
+		}
+
+		return stringBuilder.toString();
+	}
 }
